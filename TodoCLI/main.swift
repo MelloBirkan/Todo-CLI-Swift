@@ -39,7 +39,7 @@ final class JSONFileManagerCache: Cache {
 // This won't retain todos across different app launches,
 // but serves as a quick in-session cache.
 final class InMemoryCache: Cache {
-
+  
 }
 
 // The `TodosManager` class should have:
@@ -77,16 +77,27 @@ final class TodoManager {
 //    such as `add`, `list`, `toggle`, `delete`, and `exit`.
 //  * The enum should be nested inside the definition of the `App` class
 final class App {
-  enum Command {
-  case add, list, toggle, delete, exit
+  enum Command: String {
+    case add, list, toggle, delete, exit, invalid
+    
+    init(_ rawValue: String) {
+      switch rawValue {
+      case "add": self = .add
+      case "list": self = .list
+      case "toggle": self = .toggle
+      case "delete": self = .delete
+      case "exit": self = .exit
+      default: self = .invalid
+      }
+    }
   }
   
   func printMenu() {
-      print("What would you like to do? (add, list, delete, exit): ")
+    print("What would you like to do? (add, list, delete, exit): ")
   }
   
   func getInput() -> String? {
-      return readLine()
+    return readLine()
   }
   
   func run() {
@@ -98,6 +109,8 @@ final class App {
         print("Invalid input. Please try again.")
         continue
       }
+      
+      let menuOption = Command(choice)
     }
   }
   
