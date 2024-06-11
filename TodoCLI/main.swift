@@ -81,10 +81,11 @@ final class TodoManager {
   func listTodos() {
     if todos.isEmpty {
       print("Empty (try add todos)")
-    }
-    print("\nYour Todos:")
-    for (i, todo) in todos.enumerated() {
-      print("\(i + 1). \(todo.isCompleted ? "✅" : "❌") \(todo.title)")
+    } else {
+      print("\nYour Todos:")
+      for (i, todo) in todos.enumerated() {
+        print("\(i + 1). \(todo.isCompleted ? "✅" : "❌") \(todo.title)")
+      }
     }
   }
   
@@ -171,21 +172,25 @@ final class App {
         
       case .toggle:
         todoManager.listTodos()
-        print("Enter the number of the todo: ", terminator: "")
-        if let number = getInput() {
-          todoManager.toggleCompletition(forTodoAtIndex: Int(number)! - 1)
-          print("🔁 Todo completition status toggled!")
-        } else {
-          printError()
+        if !todoManager.todos.isEmpty {
+          print("Enter the number of the todo: ", terminator: "")
+          if let number = getInput() {
+            todoManager.toggleCompletition(forTodoAtIndex: Int(number)! - 1)
+            print("🔁 Todo completition status toggled!")
+          } else {
+            printError()
+          }
         }
         
       case .delete:
         todoManager.listTodos()
-        print("Enter the number of the todo: ", terminator: "")
-        if let number = getInput() {
-          todoManager.deleteTodo(atIndex: Int(number)! - 1)
-        } else {
-          printError()
+        if !todoManager.todos.isEmpty {
+          print("Enter the number of the todo: ", terminator: "")
+          if let number = getInput() {
+            todoManager.deleteTodo(atIndex: Int(number)! - 1)
+          } else {
+            printError()
+          }
         }
         
       case .exit:
