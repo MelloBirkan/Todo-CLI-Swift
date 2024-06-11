@@ -31,16 +31,16 @@ protocol Cache {
 // `FileSystemCache`: This implementation should utilize the file system
 // to persist and retrieve the list of todos.
 // Utilize Swift's `FileManager` to handle file operations.
-final class JSONFileManagerCache: Cache {
-  
-}
-
-// `InMemoryCache`: : Keeps todos in an array or similar structure during the session.
-// This won't retain todos across different app launches,
-// but serves as a quick in-session cache.
-final class InMemoryCache: Cache {
-  
-}
+//final class JSONFileManagerCache: Cache {
+//  
+//}
+//
+//// `InMemoryCache`: : Keeps todos in an array or similar structure during the session.
+//// This won't retain todos across different app launches,
+//// but serves as a quick in-session cache.
+//final class InMemoryCache: Cache {
+//  
+//}
 
 // The `TodosManager` class should have:
 // * A function `func listTodos()` to display all todos.
@@ -52,8 +52,12 @@ final class TodoManager {
   var todos = [Todo]()
   
   func listTodos() {
-    for todo in todos {
-      print(todo)
+    if todos.isEmpty {
+      print("Empty (try add todos)")
+    }
+    print("\nYour Todos:")
+    for (i, todo) in todos.enumerated() {
+      print("\(i + 1). \(todo.isCompleted ? "✅" : "❌") \(todo.title)")
     }
   }
   
@@ -93,24 +97,63 @@ final class App {
   }
   
   func printMenu() {
-    print("What would you like to do? (add, list, delete, exit): ")
+    print("What would you like to do? (add, list, toggle, delete, exit): ", terminator: "")
   }
   
   func getInput() -> String? {
     return readLine()
   }
   
+  func printError() {
+    print("Invalid input. Please try again.")
+  }
+  
   func run() {
     var running = true
+    var todoManager = TodoManager()
     
     while running {
       printMenu()
       guard let choice = getInput() else {
-        print("Invalid input. Please try again.")
+        printError()
         continue
       }
       
       let menuOption = Command(choice)
+      
+      switch menuOption {
+      case .add:
+        print("Enter todo title: ", terminator: "")
+        if let title = getInput() {
+          todoManager.addTodo(with: title)
+        } else {
+          printError()
+        }
+      case .list:
+        todoManager.listTodos()
+      case .toggle:
+        todoManager.listTodos()
+        print("Enter the number of the todo: ", terminator: "")
+        if let number = getInput() {
+          todoManager.toggleCompletition(forTodoAtIndex: Int(number)! - 1)
+          
+        } else {
+          printError()
+        }
+        
+      case .delete:
+        todoManager.listTodos()
+        print("Enter the number of the todo: ", terminator: "")
+        if let number = getInput() {
+          todoManager.deleteTodo(atIndex: Int(number)! - 1)
+        } else {
+          printError()
+        }
+      case .exit:
+        running.toggle()
+      case .invalid:
+        printError()
+      }
     }
   }
   
@@ -118,4 +161,4 @@ final class App {
 
 
 // TODO: Write code to set up and run the app.
-
+App().run()
